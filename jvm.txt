@@ -35,6 +35,10 @@ java -XX:+PrintFlagsFinal  -version
 -Xmn 设置新生代大小      一般为堆的1/3 
 
 
+-XX:+UseSerialGC :在新生代和老年代使用串行收集器
+-XX:SurvivorRatio:设置Eden区大小和Survivor区大小的比例
+-XX:NewRatio 新生代和老年代的比
+-XX:+UseParNewGC:在新生代使用并行回收收集器
 
 
 
@@ -52,7 +56,9 @@ Queue
 
 
 
--javaagent:/Users/like/data/idea/jetbrains-agent.jar
+
+
+
 
 
 
