@@ -1,0 +1,70 @@
+2019最新、最清晰讲解Java虚拟机底层原理分析与性能优化(已更新)
+
+jvm性能优化？
+
+什么是jvm？  java虚拟机
+  
+加载，验证，准备，解析，初始化，使用，卸载
+
+
+堆(线程共享)；虚拟机启动时创建，用于存放对象实例，几乎所有的对象(包含常量池)都是在堆上分配内存，当对象无法再该空间申请到内存时，将会跑出OutMemoryError一异常，同时也是垃圾收集器管理的主要区域，可通过  -Xmx  -Xms 参数来分别指定最大堆和最小堆
+
+新生代：复制算法
+老年代：标记清除算法
+
+11月2号上午目标：  将JUC教程看完   一个三个小时
+Java并发
+CAS，线程池，线程安全，AQS，并发与并行，锁
+
+
+
+volatile：保证共享数据的可见性。
+volatile：不具备互斥性，不能保证变量的原子性
+
+
+
+是否使用串行垃圾回收器：  -XX:+UseSerialGC
+多大的年龄可以升至养老区： -XX:MaxTenuringThreshold 
+查看堆初始大小： InitialHeapSize 
+
+java -XX:+PrintFlagsInitial  -version
+java -XX:+PrintFlagsFinal  -version
+
+-Xss   -XX:ThreadStackSize  单个线程栈的大小  一般默认为512k---1024k
+
+-Xmn 设置新生代大小      一般为堆的1/3 
+
+
+
+
+
+
+
+MQ衡量指标： 服务性能，数据存储，集群架构
+
+Kafka是开源的分布式系统-订阅消息系统，kafka主要特点是基于Pull的模式来处理消息消费，追求高吞吐量，一开始的目的就是用于日志收集喝和传输。
+
+Vitural：虚拟主机
+Exchange：
+Binding
+Routing key
+Queue
+
+
+
+-javaagent:/Users/like/data/idea/jetbrains-agent.jar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,139 @@
+----约束包
+yum -y install make gcc-c++ cmake bison-devel ncurses-devel libaio
+yum install libaio libaio-devel -y
+yum install perl-Data-Dumper -y
+yum install net-tools -y
+
+----cmake
+cmake \
+-DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+-DMYSQL_DATADIR=/usr/local/mysql/data \
+-DSYSCONFDIR=/etc \
+-DWITH_MYISAM_STORAGE_ENGINE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_MEMORY_STORAGE_ENGINE=1 \
+-DWITH_READLINE=1 \
+-DMYSQL_UNIX_ADDR=/var/lib/mysql/mysql.sock \
+-DMYSQL_TCP_PORT=3306 \
+-DENABLED_LOCAL_INFILE=1 \
+-DWITH_PARTITION_STORAGE_ENGINE=1 \
+-DEXTRA_CHARSETS=all \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci
+
+----安装
+make
+make install
+
+groupadd mysql
+useradd -g mysql mysql -s /sbin/nologin
+
+chown -R mysql:mysql /usr/local/mysql/data
+
+passwd mysql     Mysql_2017!
+
+cd /usr/local/mysql
+scripts/mysql_install_db --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data --user=mysql
+cp support-files/mysql.server /etc/init.d/mysql
+
+注：在启动MySQL服务时，会按照一定次序搜索my.cnf，先在/etc目录下找，找不到则会搜索"$basedir/my.cnf"，在本例中就是 /usr/local/mysql/my.cnf，这是新版MySQL的配置文件的默认位置！
+
+注意：在CentOS 7版操作系统的最小安装完成后，在/etc目录下会存在一个my.cnf，需要将此文件更名为其他的名字，如：/etc/my.cnf.bak，否则，该文件会干扰源码安装的MySQL的正确配置，造成无法启动。
+
+cp /usr/local/mysql/bin/* /usr/bin/
+cp /usr/local/mysql/bin/* /usr/sbin/
+---启动mysql
+service mysql start 
+
+---查看端口
+netstat -lntp | grep 3306
+
+---日志查看
+cd /usr/local/mysql/data 下 
+tail -f 主机名.err文件
+
+
+----修改root用户相关密码
+service mysql stop 
+mysqld_safe --user=mysql --skip-grant-tables --skip-networking &
+mysql -u root mysql
+->UPDATE user SET Password = PASSWORD('123456') WHERE user = 'root';
+->FLUSH PRIVILEGES;
+->quit;
+service mysql restart
+mysql -u root -p
+---输入正确密码即可
+
+
+
+
+
+
+------------主从复制
+
+在主备机上修改
+vi /usr/local/mysql/my.cnf
+[mysqld]
+
+# Remove leading # and set to the amount of RAM for the most important data
+# cache in MySQL. Start at 70% of total RAM for dedicated server, else 10%.
+# innodb_buffer_pool_size = 128M
+
+# Remove leading # to turn on a very important data integrity option: logging
+# changes to the binary log between backups.
+log_bin = mysql-bin
+
+# These are commonly set, remove the # and set as required.
+# basedir = .....
+# datadir = .....
+# port = .....
+server_id = 186   ----备机使用别的，不能重复
+# socket = .....
+innodb_flush_log_at_trx_commit = 1
+sync_binlog = 1
+# Remove leading # to set options mainly useful for reporting servers.
+# The server defaults are faster for transactions and fast SELECTs.
+# Adjust sizes as needed, experiment to find the optimal values.
+# join_buffer_size = 128M
+# sort_buffer_size = 2M
+# read_rnd_buffer_size = 2M
+#log = /usr/local/mysql/mysql.log
+general_log = ON
+general_log_file = /usr/local/mysql/mysql.log
+binlog-ignore-db = mysql,information_schema
+auto-increment-increment = 2
+auto-increment-offset = 1
+slave-skip-errors = all
+max_connections = 3000
+max_allowed_packet = 32M
+tmp_table_size = 256M
+read_buffer_size = 1M
+bulk_insert_buffer_size = 64M
+innodb_buffer_pool_size = 2048M
+
+修改完成后重启mysql
+
+----在主机上配置
+mysql -u root -p
+CREATE USER 'leek-coder'@'192.168.3.225' IDENTIFIED BY '123456!';
+->GRANT REPLICATION SLAVE ON *.* TO 'slave'@'192.168.3.249'  identified by '123456';      ----注意此处的IP是备机地址
+->flush privileges;
+
+---查看主库状态  记住file和position的值，后面要用
+->show master status;
+------------------+----------+--------------+------------------+-------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000001 |      1072 |              |                  |                   |
++------------------+----------+--------------+------------------+------------------ 
+
+ 
+->show slave status\G   ----从服务器同步检查，会输出
+	   ......
+           Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes
+            .....
+            
+  change master to master_host='192.168.3.25',master_user='slave_user',master_password='123456',master_log_file='mysql-bin.000001', master_log_pos=473;
+          
+从服务器的操作和前面的步骤一样，略过
