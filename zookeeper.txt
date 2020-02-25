@@ -103,13 +103,25 @@ CAP理论仅适用于原子读写的Nosql数据库，不适用于数据库系统
 
 典型的应用场景
 
-配置管理
-集群管理
+HBase:使用zookeeper进行master选举，数据间协调
+dubbo:服务注册中心
+Solr:使用Zookeeper进行集群管理，Leader选举，配置管理
+配置中心
 发布与订阅
 数据库切换
 分布式日志的收集
 分布式锁，队列管理
-master选举
+myCat:集群管理，配置管理
+sharding-sphere：集群管理，配置管理
+
+
+zookeeper同类产品：
+
+consul
+
+
+
+
 
 
 
