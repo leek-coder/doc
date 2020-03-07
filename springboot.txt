@@ -1,0 +1,63 @@
+如果工程需要打成一个war包，那么主类要继承SpringBootServletInitializer这个类，
+并重写类中configure这个方法。
+
+
+此外还要排除内置的tomcat
+
+<dependency>
+   <groupId>org.springframework.boot</>
+   <argifactId>spring-boot-starter-tomcat</>
+   <scope>provided</>
+</dependency>
+
+
+
+什么是webJar,以jar包的形式来引入前端资源，比如jQuery或者BootStrap，https://www.webjars.org/
+
+
+
+
+欢迎首页的源代码
+webjar的源代码
+异常处理的源代码
+
+
+springboot源码讲解
+自动装载原理
+
+启动jar包原理
+tomcat 启动war包原理
+扫描自己的组件原理
+
+第三节课  内容讲解
+
+
+1）以redis自动装配为例，如何修改redisTemplate的序列化器
+2）Bean的后置处理器的作用以及工作时机
+3）BeanPostProcess，InitializingBean 已经自定义方法@Init的执行时机
+第一步：构造方法
+第二步：BeanPostProcessor的before
+第三步：InitializingBean
+第四步：@init-method方法
+第五步：BeanPostProcessor的after
+
+
+4）tomcat的启动流程(******)
+ 设计的iOC整个流程
+
+
+
+5)如何扫描自己的组件，以及如何调用用到@Import注解。
+
+
+
+
+
+
+
+
+
+
+
+
+

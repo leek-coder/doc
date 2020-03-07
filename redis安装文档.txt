@@ -45,3 +45,58 @@ redis-cli -h 192.168.114.1110 -a leek-coder
 
 
 
+
+=================基本数据类型===========
+
+String:
+
+setnx  name like  如果name值不存在，就执行set创建
+
+setex  name 5 like   5s后过期，等价于 sex + expire  name
+
+
+redis是单线程的，一次只执行一条命令
+
+
+info:查看redis服务运行信息，分为9大块
+Server：服务器运行的环境参数
+Clients：客户端相关信息
+Memory：服务器运行内存统计信息
+Persistence：持久化信息
+Stats：通用统计数据
+Replication：主从复制相关信息
+CPU：CPU使用情况
+Cluster：集群信息
+Keyspace:键值对统计数量信息
+
+
+
+
+Redis的单线程和高性能
+单线程避免了多线程切换性能带来的损耗。
+Redis的IO多路复用技术，redis利用epoll来实现IO多路复用，将链接信息和事件放在队列中，一次放到文件事件分派器，
+事件分派器将事件分发给事件处理器。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

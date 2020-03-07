@@ -98,6 +98,7 @@ C(一致性):所有节点上的数据，时刻保持一致
 CAP理论仅适用于原子读写的Nosql数据库，不适用于数据库系统。
 
 
+在客户端创建的的会话周期中，创建的临时节点，会话结束以后会自动删除。
 
 
 
@@ -111,19 +112,42 @@ Solr:使用Zookeeper进行集群管理，Leader选举，配置管理
 数据库切换
 分布式日志的收集
 分布式锁，队列管理
+分布式队列
 myCat:集群管理，配置管理
 sharding-sphere：集群管理，配置管理
 
 
 zookeeper同类产品：
-
 consul
 
 
+zookeeper实现配置中心
+znode 能存储数据                 配置中心
+Watch能监听数据的改变
+
+一个配置项一个znode
+一个配置文件一个znode
 
 
 
 
+zookeeper实现分布式队列 ：  入队(创建顺序节点)
+put&&get
+出队：消费者取出所有的子节点，移除最小号节点
+
+无界队列，有界队列(分布式锁实现)
+
+
+zookeeper实现分布式锁
+
+争抢锁(创建临时节点)
+
+开始---获取锁创建节点--成功(即获得锁)执行业务 --失败 注册节点的watcher(阻塞等待)
+临时节点下不能存储子节点
+
+
+watcher
+acl
 
 
 Zookeeper特性？
@@ -150,8 +174,62 @@ Observer：直接为客户端服务但并不参与提案的投票，同时也与
 
 
 
+zookeeper客户端命令
+
+connect:链接到zookeeper集合
+create：创建znode
+exists：检查znode是否存在及其信息
+get data  从特定的znode获取数据
+set data  在特定的znode中设置数据
+delete  删除特定的znode及其所有子项
+close: 关闭连接
+
+get /tmp true   打开监听机制
 
 
+
+第三方的客户端
+
+zkClient
+Curator
+
+
+会话中的请求按FIFO顺序执行
+
+
+节点可以包含与之关联的数据以及自节点
+
+节点类型：持久，顺序，临时，临时有序节点
+
+
+
+czxid：创建该节点的zxid    zookeeper中的每次更改操作都对应一个唯一的事务id，称为Zxid，他是一个全局的有序戳记，如果zxid1小雨zxid2，则zxid1发生在zxid2之前
+mzxid：最后修改该节点的zxid
+pzxid：znode最后更新的子节点的zxid
+ctime：该节点的创建时间
+mtime：该节点的最后修改时间
+dataversion:该节点数据被修改的次数
+cversion:该节点的子节点变更次数
+dataLength：该节点的数据的长度
+numChildren:子节点数
+
+
+
+watch监听机制
+
+客户端可以在znodes上设置watch，监听znode的变化。
+
+
+
+两类watch
+
+data watch 监听数据变更
+
+child watch 监听子节点变化
+
+
+
+zookeeper集群----ZAB协议
 
 
 

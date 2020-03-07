@@ -1,0 +1,9 @@
+@SpringBootApplication
+@EnableAutoConfiguration
+@ComponentScan
+@Configuration
+@Bean
+@ConditionOnClass
+@ImportResource
+@ConfigurationProperties
+@ConditionOnMissBean

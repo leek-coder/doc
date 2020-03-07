@@ -1,0 +1,208 @@
+
+tcp的长链接
+
+安装RabbitMQ步骤
+
+Rabbitmq依赖erlang所以要先安装erlang
+
+1:上传erlang包到服务器上，并解压。
+2:tar -xvzf otp_src_19.3.tar.gz
+3:安装 erlang 的依赖工具  
+yum -y install make gcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel unixODBC-devel
+4:对erlang 进行安装环境的配置
+可以在/usr/local目录下创建  mkdir erlang
+5:对 erlang 进行安装环境的配置
+进入erlang的解压目录，执行./configure --prefix=/usr/local/erlang --without-javac
+6:编译安装
+make && make install 
+7:验证一下 erlang 是否安装成功了
+./bin/erl
+8:配置 erlang 环境变量  vim /etc/profile
+ERL_HOME=/usr/local/erlang
+PATH=$ERL_HOME/bin:$PATH
+export ERL_HOME PATH
+
+二：安装RabbitMQ
+1:上传安装包到服务器上
+2:解压  xz -d  &&  tar -xvf
+3:启动rabbitmq  
+./rabbitmq-server -detached    后台启动rabbitmq
+
+./rabbitmqctl add_user leek 101396（创建用户）
+./rabbitmqctl set_user_tags leek administrator（将创建好的用户加入管理员）
+./rabbitmqctl set_permissions -p "/" leek "." "." ".*"（授权）
+./rabbitmq-plugins enable rabbitmq_management 启动RabbitMQ管理页面
+
+rabbitmqctl add_user  username password ：添加一个用户
+rabbitmqctl list_users    列出所有的用户
+rabbitmqctl delete_user username 删除用户
+rabbitmqctl clear_permissions -p vhostpath username :清除用户的权限
+rabbitmqctl list_user_permissions username  :列出用户权限
+rabbitmqctl change_password  username newpassword  :修改密码
+rabbitmqctl add_vhost  vhostpath :添加一个虚拟主机
+rabbitmqctl  list_vhosts  列出所有的虚拟主机
+rabbitmqctl delete_vhost vhostpath
+rabbitmqctl list_queues   查看所有的队列信息
+
+
+RabbitMQ的特点？
+可靠性：RabbitMQ使用一些机制来保证消息的可靠性，持久化，传输确认以及发布确认等
+灵活的路由：在消息进入队列之前，通过交换器来路由消息
+扩展性： 多个RabbitMQ节点可以组成一个集群
+高可用性： 队列可以在集群中的机器上设置镜像
+支持多种协议： RabbitMQ 除了原生支持 AMQP 协议，还支持 STOMP、MQTT 等多种消息中间件协议
+多语言客户端
+
+消息一般由 2 部分组成：消息头（或者说是标签 Label）和 消息体。消息体也可以称为 payLoad ,消息体是不透明的，而消息头则由一系列的可选属性组成，这些属性包括 routing-key（路由键）、priority（相对于其他消息的优先权）、delivery-mode（指出该消息可能需要持久性存储）等。生产者把消息交由 RabbitMQ 后，RabbitMQ 会根据消息头把消息发送给感兴趣的 Consumer(消费者)。
+
+生产者将消息发送给交换器时，需要一个RoutingKey,当 BindingKey 和 RoutingKey 相匹配时
+
+
+多个消费者可以订阅同一个队列，这时队列中的消息会被平均分摊（Round-Robin，即轮询）给多个消费者进行处理，而不是每个消费者都收到所有的消息并处理，这样避免的消息被重复消费
+
+
+
+Broker：对于 RabbitMQ 来说，一个 RabbitMQ Broker 可以简单地看作一个 RabbitMQ 服务节点，或者RabbitMQ服务实例
+
+
+
+Exchange交换机的类型？
+type类型(交换机类型)： direct，topic，fanout，headers
+Durability：是否需要持久化，true是要持久化
+Auto Delete：当最后一个绑定到Exchange上的队列删除后，自动删除该Exchange
+================================================================
+RabbitMQ的高级特性？
+
+消息如何保证100%的投递成功
+幂等性概念详解
+在海量订单产生的业务高峰期，如何避免消息的重复消费问题
+Confirm确定消息，return返回消息。
+自定义消费者
+消息的ACK与重回队列
+消息的限流
+TTL消息
+死信队列
+rabbitmq的延迟队列
+手动和自动确认消息
+队列的持久化和非持久化
+work  queues 工作队列  公平分发  轮询
+场景Demo，未支付订单30分钟取消
+注册--发邮件或者发信息 可以使用消息队列
+应用解耦：订单和库存  （发布订阅）
+流量削峰：秒杀
+
+
+
+Broker:它提供一种传输服务,它的角色就是维护一条从生产者到消费者的路线，保证数据能按照指定的方式进行传输。
+Exchange：消息交换机,它指定消息按什么规则,路由到哪个队列。 
+Queue:消息的载体,每个消息都会被投到一个或多个队列。 
+Binding:绑定，它的作用就是把exchange和queue按照路由规则绑定起来. 
+Routing Key:路由关键字,exchange根据这个关键字进行消息投递。 
+vhost:虚拟主机,一个broker里可以有多个vhost，用作不同用户的权限分离。 
+Producer:消息生产者,就是投递消息的程序. 
+Consumer:消息消费者,就是接受消息的程序. 
+Channel:消息通道,在客户端的每个连接里,可建立多个channel
+
+
+Broker：简单来说就是消息队列服务器实体。
+Exchange：消息交换机，它指定消息按什么规则，路由到哪个队列。
+Queue：消息队列载体，每个消息都会被投入到一个或多个队列。
+Binding：绑定，它的作用就是把exchange和queue按照路由规则绑定起来。
+Routing Key：路由关键字，exchange根据这个关键字进行消息投递。
+vhost：虚拟主机，一个broker里可以开设多个vhost，用作不同用户的权限分离。
+producer：消息生产者，就是投递消息的程序。
+consumer：消息消费者，就是接受消息的程序。
+channel：消息通道，在客户端的每个连接里，可建立多个channel，每个channel代表一个会话任务。
+使用过程：
+客户端连接到消息队列服务器，打开一个channel。
+客户端声明一个exchange，并设置相关属性。
+客户端声明一个queue，并设置相关属性。
+客户端使用routing key，在exchange和queue之间建立好绑定关系。
+客户端投递消息到exchange。
+exchange接收到消息后，就根据消息的key和已经设置的binding，进行消息路由，将消息投递到一个或多个队列里。
+
+
+Confirm确认消息&&Return 返回消息
+
+第一步：在channel上开启确认模式：channel.confirmSelect();
+第二步：在channel上添加监听，addConfirmListener，监听成功和失败的返回结果，根据具体的结果对消息进行重新发送，或者记录日志等到后续处理。
+
+return 消息机制
+Ruturn listener 用于处理一些不可路由的消息。
+
+
+==========================================================================================
+
+
+
+
+
+1:怎么自动删除没人消费的消息？
+  设置一个队列的消息的TTL
+  指定消息的TTL
+
+2:什么情况下消息会变成死信？
+  1:消息过期
+  2:拒绝消息，没有自动确认， 并且是requeue==false 没有让消息重新入队。
+  3:队列达到最大长度。
+
+
+3:可以让消息优先得到消费嘛？
+  设置优先级
+
+4:如果实现延迟发送消息
+  1:延迟队列的插件
+  2:死信队列
+5:MQ如何实现RPC？
+
+
+
+
+
+
+如何确保消息投递的可靠性？
+
+服务端确认 ----transaction模式  阻塞
+
+将channel设置成事务模式
+channel.txSelect();
+提交事务
+channel.txCommit();
+//事务回滚
+channel.txRollback();
+
+
+
+服务端确认---confirm模式
+channel.confirmSelect();
+if(channel.waitForConfirms()){
+  //消息发送成功
+}
+
+
+return机制
+
+
+消息的存储
+
+1:队列持久化
+2:交换机持久化
+3:消息持久化
+
+
+消费者确认
+channel.basicAck() //手工应答
+channel.basicReject();//单条拒绝
+channel.basicNack();//批量拒绝
+
+
+
+消息幂等性？
+ 
+消息的顺序性
+
+
+
+
+
+
