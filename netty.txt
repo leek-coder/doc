@@ -10,7 +10,7 @@
 
 Linux I/O模型介绍
 
-阻塞式 I/O模型
+阻塞式 I/O模型  :指的是需要内核IO操作彻底完成后，才返回到用户空间执行用户操作。阻塞指的是，用户空间程序的执行状态，传统的IO模型都是同步阻塞IO。
 非阻塞式I/O模型
 I/O复用
 信号驱动式I/O
@@ -23,3 +23,45 @@ Java I/O
 
 
 Java NIO(多路复用    同步+非阻塞)
+
+
+网络传输，分布式协调，分布式缓存，服务化架构
+
+
+Java NIO Buffer三大核心概念，   position，limit，capacity
+
+
+DirectByteBuffer
+HeapByteBuffer
+
+Netty是什么？
+
+异步事件驱动框架，用户快速开发高性能服务端和客户端
+封装了JDK底层BIO和NIO模型，提供高度可用的API
+自带编码解码器解决拆包粘包问题，用户只用关心业务逻辑。
+Reactor线程模型支持高并发海量链接
+
+
+
+深入剖析Buffer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

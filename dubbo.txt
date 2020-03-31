@@ -7,5 +7,16 @@
 
 session会话，session共享   
 
-dubbo
+
+
+
+ServiceConfig:服务配置对象
+ApplicationConfig：应用名称
+ProtocolConfig：协议对象
+
+
+
+ReferenceConfig：引用对象
+
+
 

@@ -10,6 +10,8 @@
    <scope>provided</>
 </dependency>
 
+@EnableWebMvc 如果使用这个注解表达，自己全面接管springboot，
+
 
 
 什么是webJar,以jar包的形式来引入前端资源，比如jQuery或者BootStrap，https://www.webjars.org/
@@ -44,10 +46,19 @@ tomcat 启动war包原理
 
 4）tomcat的启动流程(******)
  设计的iOC整个流程
+getBean->doGetBean->createBean->doCreateBean->createInstance->initbean的初始化方法
+
+
+TomcatWebServerFactoryCustomizer
+ServletWebServerFactoryCustomizer
+TomcatServletWebServerFactoryCustomizer
+webServerFactoryCustomizerBeanPostProcessor
 
 
 
 5)如何扫描自己的组件，以及如何调用用到@Import注解。
+
+
 
 
 
